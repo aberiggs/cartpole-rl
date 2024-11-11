@@ -223,6 +223,9 @@ for i_episode in range(num_episodes):
             plot_durations()
             break
 
+# Save the model
+torch.save(policy_net.state_dict(), "model.pt")
+
 print('Complete')
 plot_durations(show_result=True)
 plt.ioff()
