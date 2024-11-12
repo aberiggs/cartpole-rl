@@ -119,6 +119,7 @@ def optimize_model():
     non_final_next_states = torch.cat([s for s in batch.next_state
                                                 if s is not None])
     state_batch = torch.cat(batch.state)
+    print(state_batch.size())
     action_batch = torch.cat(batch.action)
     reward_batch = torch.cat(batch.reward)
 
@@ -161,6 +162,7 @@ for i_episode in range(num_episodes):
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
     for t in count():
         action = select_action(state)
+        print(action)
         observation, reward, terminated, truncated, _ = env.step(action.item())
         reward = torch.tensor([reward], device=device)
         done = terminated or truncated
@@ -171,6 +173,7 @@ for i_episode in range(num_episodes):
             next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
 
         # Store the transition in memory
+        print(state.size())
         memory.push(state, action, next_state, reward)
 
         # Move to the next state
@@ -193,7 +196,7 @@ for i_episode in range(num_episodes):
             break
 
 # Save the model
-torch.save(policy_net.state_dict(), "model.pt")
+torch.save(target_net.state_dict(), "model.pt")
 
 print('Complete')
 plot_durations(show_result=True)

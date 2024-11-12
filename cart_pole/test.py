@@ -28,12 +28,15 @@ class DQN(nn.Module):
 
 # Load the model from "model.pt"
 
-policy_net = DQN(4, 2).to(device)
-policy_net.load_state_dict(torch.load("model.pt", weights_only=True))
-policy_net.eval()
+model = DQN(4, 2).to(device)
+model.load_state_dict(torch.load("model.pt", weights_only=True))
+model.eval()
 
 def select_action(state):
-    return policy_net(state).max(1).indices.view(1, 1)
+    # t.max(1) will return the largest column value of each row.
+    # second column on max result is index of where max element was
+    # found, so we pick action with the larger expected reward.
+    return model(state).max(1).indices.view(1, 1)
 
 env = gym.make('CartPole-v1', render_mode="human")
 state, info = env.reset()
@@ -41,7 +44,7 @@ state, info = env.reset()
 count = 0
 total_count = 0
 episode = 0
-while episode < 10:
+while episode < 5:
     count += 1
     total_count += 1
 
